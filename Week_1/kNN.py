@@ -32,8 +32,13 @@ for label in datesValidation:
     else:
         labelsValidation.append('winter')
 
-labelOptions = ['winter', 'herfst', 'zomer', 'lente']
+labelOptions = ['lente', 'zomer', 'herfst', 'winter']
 
+## getSeasonLabel
+#
+#  @param array: array with data to get season label for
+#  @param data: data which will be used to determine the label
+#  @param k: the k represents what k means in k Nearest Neighbour
 def getSeasonLabel(array, data, k):
     # Calculate distances
     distances = []
@@ -55,6 +60,7 @@ def getSeasonLabel(array, data, k):
     for option in labelOptions:
         if lowestIndexLabels.count(option) >= amount:
             tmp = option
+            # If amount is the same, look at the first thing it encounters so it can better say which solution it is
             if lowestIndexLabels.count(option) == amount:
                 for season in lowestIndexLabels:
                     if season == option:
@@ -72,6 +78,7 @@ def getSeasonLabel(array, data, k):
 
 bestK = 0
 tmpPercentage = 0
+# Get best k using validation data
 for k in range(1,len(data)):
     hits = 0
     for i in range(0, len(dataValidation)):
