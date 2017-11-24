@@ -75,6 +75,17 @@ def kMeans(data, k):
     maxValues = getMaxValues(data)
     centroids = getRandomPoints(maxValues, k)
     assigned = assignToCluster(centroids, data)
+
+    #recalculate centroids until there is something assigned to every one
+    tmp = 0
+    while tmp < k:
+        tmp = 0
+        for i in assigned:
+            tmp+=1
+        if tmp < k:
+            centroids = getRandomPoints(maxValues, k)
+            assigned = assignToCluster(centroids, data)
+
     for i in range(k):
         try:
             print(len(assigned[list(assigned.keys())[i]]))
@@ -82,31 +93,48 @@ def kMeans(data, k):
             print(0)
     print("======")
 
-    for i in range(100):
-        assigned = assignToCluster(centroids, data)
+    while True:
+        tmp = assigned
         centroids = getNewCentroids(assigned)
-    return assigned
+        assigned = assignToCluster(centroids, data)
+        # check whether the classes differ
+        check = True
+        for j in range(k):
+            for l in range(len(assigned[list(assigned.keys())[j]])):
+                try:
+                    if assigned[list(assigned.keys())[j]][l].all() != tmp[list(tmp.keys())[j]][l].all():
+                        check = False
+                except IndexError:
+                    check = False
+        if check:
+            return assigned
 
-k = 4
-for i in range(10):
+## WIP
+def calculateIntraclusterDistance(means):
+    intraDistance = 0
+    for centroid in means:
+        distance = 0
+        # create list of a string
+        tmp = []
+        for i in centroid.strip('[]').replace(",", "").split():
+            tmp.append(float(i))
+        for cluster in means[centroid]:
+            distance = 0
+            for j in range(len(tmp)):
+                distance += ((tmp[j]-cluster[j])**2)
+            distance += math.sqrt(distance)
+        intraDistance += distance
+    print("distance",intraDistance)
+    return intraDistance
+
+for k in range(2, 10):
     means = kMeans(data, k)
+    print(means)
+    print(calculateIntraclusterDistance(means))
     for i in range(k):
         try:
             print(len(means[list(means.keys())[i]]))
         except:
             print(0)
     print()
-
-"""
-K MEANS ALGORITHM
-Given:
-    • Training set X of examples {x⃗1,...,x⃗n} where
-            – x ̄i is the feature vector of example i
-    • A set K of centroids {c⃗1,...,⃗ck}
-Do:
-1. Foreachpoint⃗xi:
-    (a) Find the nearest centroid ⃗cj;
-    (b) Assign point ⃗xi to cluster j;
-2. For each cluster j = 1,...,k:
-    (a) Calculate new centroid ⃗c j as the mean of all points ⃗xi that are assigned to cluster j.
-"""
+# PLOT WITH MATPLOTLIB
