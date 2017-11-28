@@ -1,7 +1,21 @@
 import numpy as np, random, math
+import matplotlib.pyplot as plt
 
 # import training data
 data = np.genfromtxt('Dataset/dataset1.csv', delimiter=';', usecols=[1,2,3,4,5,6,7])
+dates = np.genfromtxt('Dataset/dataset1.csv', delimiter=';', usecols=[0])
+labels = []
+for label in dates:
+    if label < 20000301:
+        labels.append('winter')
+    elif 20000301 <= label < 20000601:
+        labels.append('lente')
+    elif 20000601 <= label < 20000901:
+        labels.append('zomer')
+    elif 20000901 <= label < 20001201:
+        labels.append('herfst')
+    else:
+        labels.append('winter')
 
 # import validation data
 dataValidation = np.genfromtxt('Dataset/validation1.csv', delimiter=';', usecols=[1,2,3,4,5,6,7])
@@ -86,13 +100,6 @@ def kMeans(data, k):
             centroids = getRandomPoints(maxValues, k)
             assigned = assignToCluster(centroids, data)
 
-    for i in range(k):
-        try:
-            print(len(assigned[list(assigned.keys())[i]]))
-        except:
-            print(0)
-    print("======")
-
     while True:
         tmp = assigned
         centroids = getNewCentroids(assigned)
@@ -109,7 +116,6 @@ def kMeans(data, k):
         if check:
             return assigned
 
-## WIP
 def calculateIntraclusterDistance(means):
     intraDistance = 0
     for centroid in means:
@@ -118,23 +124,48 @@ def calculateIntraclusterDistance(means):
         tmp = []
         for i in centroid.strip('[]').replace(",", "").split():
             tmp.append(float(i))
+
+        # calculate distances
         for cluster in means[centroid]:
             distance = 0
             for j in range(len(tmp)):
                 distance += ((tmp[j]-cluster[j])**2)
             distance += math.sqrt(distance)
         intraDistance += distance
-    print("distance",intraDistance)
     return intraDistance
 
-for k in range(2, 10):
-    means = kMeans(data, k)
-    print(means)
-    print(calculateIntraclusterDistance(means))
-    for i in range(k):
-        try:
-            print(len(means[list(means.keys())[i]]))
-        except:
-            print(0)
-    print()
-# PLOT WITH MATPLOTLIB
+## DETERMINE LABELS
+means = kMeans(data, 4)
+labelOptions = ['winter', 'herfst', 'zomer', 'lente']
+counter = 1
+for i in means:
+    tmp = []
+    for j in means[i]:
+        for index in range(len(data)):
+            if str(j) == str(data[index]):
+                tmp.append(labels[index])
+                break
+
+    solution = ''
+    amount = -1
+    for option in labelOptions:
+        print(option, tmp.count(option))
+        if tmp.count(option) > amount:
+            solution = option
+            amount = tmp.count(option)
+    print("Cluster {} is season '{}'".format(counter, solution))
+    counter += 1
+
+## PLOTTEN
+y = []
+x = []
+for k in range(1, 11):
+    distance = []
+    for j in range(10):
+        means = kMeans(data, k)
+        distance.append(calculateIntraclusterDistance(means))
+    x.append(k)
+    y.append(sorted(distance)[0])
+    print("x {} y {}".format(x, y))
+plt.plot(x, y)
+plt.show()
