@@ -13,10 +13,10 @@ class Perceptron:
     learnRate = 0
     bias = -1
 
-    def __init__(self, input, learnRate=0.1):
-        self.input = input
+    def __init__(self, inputs, learnRate=0.1):
         # Add a bias
-        self.input.append(self.bias)
+        self.input = inputs + [self.bias]
+
         for entry in self.input:
             self.weights.append(random.random())
         self.learnRate = learnRate
@@ -46,9 +46,8 @@ class Perceptron:
             print("Current input", self.input)
             exit()
         else:
-            self.input = input
             # re-add the bias
-            self.input.append(self.bias)
+            self.input = input + [self.bias]
 
     def get_activation(self):
         return sigmoid(self.get_sum())
@@ -62,7 +61,7 @@ class Perceptron:
 
 #######
 # NOR #
-#######          1|2|3|output
+#######          1|2|3|  output
 trainingNOR = [[[0,0,0], 1],
                [[1,0,0], 0],
                [[1,1,0], 0],
@@ -73,14 +72,15 @@ trainingNOR = [[[0,0,0], 1],
                [[1,0,1], 0]]
 
 NOR = Perceptron(trainingNOR[0][0])
-for j in range(50):
+#print(trainingNOR[0][0])
+for j in range(100):
     for i in range(len(trainingNOR)):
-        print("hi")
-        print(trainingNOR[i][0])
+        #print("hi")
+        #print(trainingNOR[i][0])
         NOR.set_input(trainingNOR[i][0])
         NOR.update(trainingNOR[i][1])
 
 print("NOR RESULTS:")
 for i in range(len(trainingNOR)):
     NOR.set_input(trainingNOR[i][0])
-    print(trainingNOR[i][1], NOR.get_activation())
+    print("{:2} {:20} {}".format(trainingNOR[i][1], NOR.get_activation(), 1 if NOR.get_activation() > 0.19 else 0))
