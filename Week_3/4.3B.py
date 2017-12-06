@@ -72,11 +72,8 @@ trainingNOR = [[[0,0,0], 1],
                [[1,0,1], 0]]
 
 NOR = Perceptron(trainingNOR[0][0])
-#print(trainingNOR[0][0])
 for j in range(100):
     for i in range(len(trainingNOR)):
-        #print("hi")
-        #print(trainingNOR[i][0])
         NOR.set_input(trainingNOR[i][0])
         NOR.update(trainingNOR[i][1])
 
