@@ -71,7 +71,7 @@ trainingOR =  [ [[0,0], 0],
                 [[1,1], 1]]
 
 OR = Perceptron(trainingOR[0][0])
-for j in range(100):
+for j in range(1000):
     for i in range(len(trainingOR)):
         OR.set_input(trainingOR[i][0])
         OR.update(trainingOR[i][1])
@@ -90,7 +90,7 @@ trainingNAND = [[[0,0], 1],
                 [[1,1], 0]]
 
 NAND = Perceptron(trainingNAND[0][0])
-for k in range(200):
+for j in range(1000):
     for i in range(len(trainingNAND)):
         NAND.set_input(trainingNAND[i][0])
         NAND.update(trainingNAND[i][1])
@@ -109,7 +109,7 @@ trainingAND = [ [[0,0], 0],
                 [[1,1], 1]]
 
 AND = Perceptron(trainingAND[0][0])
-for l in range(100):
+for j in range(1000):
     for i in range(len(trainingAND)):
         AND.set_input(trainingAND[i][0])
         AND.update(trainingAND[i][1])
@@ -118,3 +118,19 @@ for i in range(len(trainingAND)):
     AND.set_input(trainingAND[i][0])
     AND.update(trainingAND[i][1])
     print("{:2} {:20} {}".format(trainingAND[i][1], AND.get_activation(), 1 if AND.get_activation() > 0.45 else 0))
+
+#######
+# XOR #
+#######
+XORData =  [[[0,0], 0],
+            [[0,1], 1],
+            [[1,0], 1],
+            [[1,1], 0]]
+
+# XOR consists of a NAND and a OR in the hidden layer and an AND in the output layer, I will use my own trained ports
+print("XOR RESULT")
+for i in range(len(XORData)):
+    NAND.set_input(XORData[i][0])
+    OR.set_input(XORData[i][0])
+    AND.set_input([NAND.get_activation(), OR.get_activation()])
+    print("{:2} {:20} {}".format(XORData[i][1], AND.get_activation(), 1 if AND.get_activation() > 0.45 else 0))
