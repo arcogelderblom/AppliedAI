@@ -23,7 +23,6 @@ class Perceptron:
         self.weights = []
 
         for entry in self.input:
-            self.weights.append(0.5)
             self.weights.append(random.uniform(-2,2))
 
         self.learnRate = learnRate
@@ -195,7 +194,7 @@ perceptron1 = Perceptron(XORData[0][0])
 perceptron2 = Perceptron(XORData[0][0])
 perceptron3 = Perceptron([perceptron1, perceptron2])
 network = Network([[perceptron1, perceptron2], [perceptron3]])
-for i in range(2000):
+for i in range(3000):
     for j in range(len(XORData)):
         perceptron1.set_input(XORData[j][0])
         perceptron2.set_input(XORData[j][0])
