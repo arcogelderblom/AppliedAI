@@ -1,0 +1,24 @@
+    [-4]     [ 0]     [ 3]
+u = [ 1] v = [ 9] w = [-2] x = [1] y = [ 0]
+    [ 2]     [-6]     [-1]     [5]     [-8]
+
+a. ⟨u|v⟩
+b. ⟨v|u⟩
+c. ⟨w|x⟩
+d. ⟨u|v⟩w
+e. ⟨⟨u|v⟩w|w⟩
+f. ⟨⟨x|y⟩w|w⟩
+g. ⟨⟨x|y⟩x|w⟩
+
+Answers:
+a. 0+9+-12= -3
+b. 0+9+-12= -3
+c. Geen antwoord mogelijk, niet de juiste dimensies
+d. (0+9+-12)*w= -3*w =  [-9]
+                        [ 6]
+                        [ 3]
+e. (answer of d. and w the innerproduct) = -27+-12+-3= -42
+f. ⟨⟨x|y⟩w|w⟩ = ⟨0+-40*w|w⟩ =  ⟨[-120]|w⟩ = -360+-160+-40 = -560
+                                [  80]
+                                [  40]
+g. Geen antwoord mogelijk, niet de juiste dimensies
