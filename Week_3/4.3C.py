@@ -15,8 +15,8 @@ class Perceptron:
 
     def __init__(self, inputs, learnRate=0.5):
         """
-        :param
-        :param
+        :param inputs: list of inputs of the Perceptron
+        :param learnRate: learn rate necessary for some calculation, standard is 0.5
         """
         # Add a bias
         self.input = inputs + [self.bias]
@@ -32,7 +32,7 @@ class Perceptron:
 
     def get_sum(self):
         """
-        :return
+        :return returns the weighted sum
         """
         self.sum = 0
         for i in range(len(self.input)):
@@ -44,22 +44,21 @@ class Perceptron:
 
     def get_error(self):
         """
-
-        :return:
+        :return: returns an value for error
         """
         return self.error
 
     def calc_error(self, error=None, weight=None, expectation=None):
         """
-
-        :param error:
-        :param weight:
-        :param expectation:
-        :return:
+        Calculate the error, either give a value to expectation or an value to weight and error.
+        :param error: the total error of the layer before
+        :param weight: weight of the connection between output and input
+        :param expectation: expected outcome
+        :return: the calculated error
         """
-        if error != None and expectation == None:
+        if error != None and weight != None and expectation == None:
             self.error = derivativeSigmoid(self.sum) * weight * error
-        elif expectation != None and error == None:
+        elif expectation != None and weight== None and error == None:
             self.error = derivativeSigmoid(self.sum) * (expectation - self.activation)
         else:
             print("Wrong function call on calc_error")
@@ -69,8 +68,8 @@ class Perceptron:
 
     def calc_nested_error(self, totalError):
         """
-
-        :param totalError:
+        Calculate the error of all inputs using the total error and the weight belonging to the correct input
+        :param totalError: the total error of the layer before
         """
         for i in range(len(self.input)):
             if type(self.input[i]) is Perceptron:
@@ -78,6 +77,7 @@ class Perceptron:
 
     def update_weights(self):
         """
+        Update all the weights of the Perceptrons inputs
         """
         for i in range(len(self.input)):
             if type(self.input[i]) is Perceptron:
@@ -87,7 +87,9 @@ class Perceptron:
 
     def set_input(self, input):
         """
-        :param input:
+        Sets new input values without changing the weights, usefull for training purposes. Note that a bias does not
+        need to be included, the bias is added automatically.
+        :param input: list of inputs without a bias
         """
         # Minus one because of the bias
         if len(input) != len(self.input)-1:
@@ -101,8 +103,7 @@ class Perceptron:
 
     def get_activation(self):
         """
-
-        :return:
+        :return: The calculated activation value
         """
         self.activation = sigmoid(self.get_sum())
         return self.activation
@@ -113,14 +114,16 @@ class Network:
     """
     def __init__(self, network):
         """
-        :param network:
+        Initialize a network using a list of lists where the total list is the network, and the nested lists represent
+        layers like this: [ [layer1], [layer2] ]
+        :param network: list of lists containing Perceptrons
         """
         self.network = list(reversed(network))  # Reverse so index 0 is output layer
         self.outputError = []
 
     def update(self, numbers):
         """
-        :param numbers:
+        :param numbers: list of expectations
         """
         if len(numbers) != len(self.network[0]):
             print("Your expected amount of outputs is not equal to the amount of neurons in the last layer")
@@ -134,7 +137,8 @@ class Network:
 
     def calc_network_error(self, numbers):
         """
-        :param numbers:
+        Go through the network to calculate it's all error values
+        :param numbers: list of expectation
         """
         self.outputError = []
         for i in range(len(self.network)):
@@ -159,13 +163,14 @@ class Network:
 
     def get_output(self):
         """
-        :return:
+        :return: the calculated output of the nework
         """
         self.calc_output()
         return self.output
 
     def calc_output(self):
         """
+        Calculate the output of the network. This is stored in a list variable.
         """
         reversedNetwork = list(reversed(self.network))  # Reverse so index 0 is first layer
         self.output = []
@@ -194,7 +199,7 @@ perceptron1 = Perceptron(XORData[0][0])
 perceptron2 = Perceptron(XORData[0][0])
 perceptron3 = Perceptron([perceptron1, perceptron2])
 network = Network([[perceptron1, perceptron2], [perceptron3]])
-for i in range(3000):
+for i in range(10000):
     for j in range(len(XORData)):
         perceptron1.set_input(XORData[j][0])
         perceptron2.set_input(XORData[j][0])
