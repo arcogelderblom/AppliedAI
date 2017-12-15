@@ -1,0 +1,2 @@
+The algorithm is like dropping a massive ball on a mountain and let it find it's way down. When it has found the lowest
+point then that is the point where the sweetspot is and we should edit our weights and biasses.
