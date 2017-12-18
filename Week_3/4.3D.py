@@ -17,7 +17,7 @@ class Perceptron:
     """
     bias = -1
 
-    def __init__(self, inputs, learnRate=0.5):
+    def __init__(self, inputs, learnRate=0.1):
         """
         :param inputs: list of inputs of the Perceptron
         :param learnRate: learn rate necessary for some calculation, standard is 0.5
@@ -189,11 +189,23 @@ class Network:
                 for entry in layer:
                     entry.get_activation()
 
+    def __str__(self):
+        """
+        Print the data of the network, this means the configuration
+        """
+        network = list(reversed(self.network))
+        string = ""
+        for index in range(len(self.network)):
+            string += "Layer {} consists of {} neurons.\n".format(index+1, len(network[index]))
+        string += "{} is the total amount of layers".format(len(self.network))
+        return string
+
+
 
 # Data used for training is all data except for the last 3 of every flowertype, this is used for testing
 equivalents = {"Iris-setosa": [1, 0, 0],
                "Iris-versicolor": [0, 1, 0],
-               "Iris-virginica": [0, 0, 1],}
+               "Iris-virginica": [0, 0, 1]}
 
 # Import training data
 data = np.genfromtxt('Dataset/bezdekIris.data.txt', delimiter=',', usecols=[0, 1, 2, 3]).tolist()
@@ -210,32 +222,38 @@ testTmpTypes = np.genfromtxt('Dataset/bezdekIris.testData.txt', dtype=str, delim
 testTypes = []
 for flowerType in testTmpTypes:
     testTypes.append(equivalents[flowerType])
-learnrate = 0.7
 # The network setup
-layer1_1 = Perceptron([0, 0, 0, 0], learnrate)
-layer1_2 = Perceptron([0, 0, 0, 0], learnrate)
-layer1_3 = Perceptron([0, 0, 0, 0], learnrate)
-layer1_4 = Perceptron([0, 0, 0, 0], learnrate)
+layer1_1 = Perceptron([0, 0, 0, 0])
+layer1_2 = Perceptron([0, 0, 0, 0])
+layer1_3 = Perceptron([0, 0, 0, 0])
+layer1_4 = Perceptron([0, 0, 0, 0])
 
 # 4 inputs, for every distinctive property 1
 layer1 = [layer1_1, layer1_2, layer1_3, layer1_4]
 
-output_1 = Perceptron(layer1, learnrate)
-output_2 = Perceptron(layer1, learnrate)
-output_3 = Perceptron(layer1, learnrate)
+layer2_1 = Perceptron(layer1)
+layer2_2 = Perceptron(layer1)
+layer2_3 = Perceptron(layer1)
+layer2_4 = Perceptron(layer1)
+layer2 = [layer2_1, layer2_2, layer2_3, layer2_4]
+
+output_1 = Perceptron(layer2)
+output_2 = Perceptron(layer2)
+output_3 = Perceptron(layer2)
 
 # 3 outputs for the possible 3 answers
 outputlayer = [output_1, output_2, output_3]
 
-network = Network([layer1, outputlayer])
+network = Network([layer1, layer2, outputlayer])
 
 trainingAmount = 20000
+print(network)
 for j in range(trainingAmount):
-    print(j)
     for i in range(len(data)):
         for perceptron in layer1:
             perceptron.set_input(data[i])
         network.update(types[i])
+    print("{}%".format(round((j/trainingAmount)*100, 2)))
 
 for i in range(len(testData)):
     for perceptron in layer1:
@@ -246,6 +264,7 @@ for i in range(len(testData)):
     for result in range(len(tmp)):
         print(testTypes[i][result], tmp[result])
     print()
+print(network)
 
 """
 Using 2 layers, 4 perceptrons in first layer and 3 perceptrons in second layer
@@ -294,7 +313,4 @@ After 20000 training cycles this is the result: very good in recognizing 2 flowe
     0 0.0007329576779295607
     0 0.024593908088825472
     1 1.440114885666432e-10
-
-Using 2 layers, 8 perceptrons in first layer and 3 perceptrons in second layer
-After 20000 training cycles this is the result: very good in recognizing 2 flowers, sucks at the other.
 """
