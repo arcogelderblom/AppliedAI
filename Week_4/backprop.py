@@ -23,7 +23,14 @@ def forward(inputs,weights,function=sigmoid,step=-1):
     step=-1 calculates all layers, thus provides the output of the network
     step=0 returns the inputs
     any step in between, returns the output vector of that particular (hidden) layer"""
-    pass
+    if step == 0:
+        return inputs
+    elif step == -1:
+        step = len(weights)
+        return sigmoid(np.dot(weights[step-1], forward(inputs, weights, sigmoid, step-1)))
+    else:
+        return sigmoid(np.dot(weights[step-1], forward(inputs, weights, sigmoid, step-1)))
+
 
 def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_sigmoid, eta=0.01):
     """
@@ -59,3 +66,11 @@ def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_s
 # given an array w of numpy arrays per layer and the deltas calculated by backprop, do
 # for index in range(len(w)):
 #     w[index] = w[index] + deltas[index]
+
+data = [[[1, 0, 0], 1],
+     [[1, 0, 1], 0],
+     [[1, 1, 0], 0],
+     [[1, 1, 1], 0]]
+
+w = np.array([[1,0.5,0.5]])
+
