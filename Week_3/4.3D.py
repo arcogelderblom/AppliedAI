@@ -222,7 +222,8 @@ testTmpTypes = np.genfromtxt('Dataset/bezdekIris.testData.txt', dtype=str, delim
 testTypes = []
 for flowerType in testTmpTypes:
     testTypes.append(equivalents[flowerType])
-# The network setup
+
+# The network setup https://www.neuraldesigner.com/learning/examples/iris_flowers_classification
 layer1_1 = Perceptron([0, 0, 0, 0])
 layer1_2 = Perceptron([0, 0, 0, 0])
 layer1_3 = Perceptron([0, 0, 0, 0])
@@ -235,7 +236,8 @@ layer2_1 = Perceptron(layer1)
 layer2_2 = Perceptron(layer1)
 layer2_3 = Perceptron(layer1)
 layer2_4 = Perceptron(layer1)
-layer2 = [layer2_1, layer2_2, layer2_3, layer2_4]
+layer2_5 = Perceptron(layer1)
+layer2 = [layer2_1, layer2_2, layer2_3, layer2_4, layer2_5]
 
 output_1 = Perceptron(layer2)
 output_2 = Perceptron(layer2)
@@ -246,8 +248,7 @@ outputlayer = [output_1, output_2, output_3]
 
 network = Network([layer1, layer2, outputlayer])
 
-trainingAmount = 20000
-print(network)
+trainingAmount = 500
 for j in range(trainingAmount):
     for i in range(len(data)):
         for perceptron in layer1:
