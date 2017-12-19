@@ -30,7 +30,6 @@ class Perceptron:
             self.weights.append(random.uniform(-2, 2))
 
         self.learnRate = learnRate
-
         self.sum = 0
         self.activation = 0
 
@@ -52,32 +51,42 @@ class Perceptron:
         """
         return self.error
 
-    def calc_error(self, error=None, weight=None, expectation=None):
+    def calc_error(self, error=None, expectation=None):
         """
         Calculate the error, either give a value to expectation or an value to weight and error.
         :param error: the total error of the layer before
-        :param weight: weight of the connection between output and input
         :param expectation: expected outcome
         :return: the calculated error
         """
-        if error != None and weight != None and expectation == None:
-            self.error = derivativeSigmoid(self.sum) * weight * error
-        elif expectation != None and weight == None and error == None:
+        if error != None and expectation == None:
+            self.error = derivativeSigmoid(self.sum) * error
+        elif expectation != None and error == None:
             self.error = derivativeSigmoid(self.sum) * (expectation - self.activation)
         else:
             print("Wrong function call on calc_error")
-            print("Input you have given was error={} weight={} expectation={}".format(error, weight, expectation))
+            print("Input you have given was error={} expectation={}".format(error, expectation))
             exit()
         return self.error
 
-    def calc_nested_error(self, totalError):
+    def get_error_per_layer(self):
         """
-        Calculate the error of all inputs using the total error and the weight belonging to the correct input
-        :param totalError: the total error of the layer before
+        Calculate for each input of the perceptron the 'error', being the error times the weight of the connection
+        :return: list of errors, 1 entry per input
+        """
+        errors = []
+        for i in range(len(self.input)):
+            if type(self.input[i]) is Perceptron:
+                errors.append(self.error * self.weights[i])
+        return errors
+
+    def calc_nested_error(self, errors):
+        """
+        Calculate the error of all inputs using the error belonging to the correct input
+        :param errors: a list of errors to use for the calculation per input
         """
         for i in range(len(self.input)):
             if type(self.input[i]) is Perceptron:
-                self.input[i].calc_error(error=totalError, weight=self.weights[i])
+                self.input[i].calc_error(error=errors[i])
 
     def update_weights(self):
         """
@@ -146,24 +155,20 @@ class Network:
         Go through the network to calculate it's all error values
         :param numbers: list of expectation
         """
-        self.outputError = []
         for i in range(len(self.network)):
             if i == 0:
-                error = 0
                 for j in range(len(self.network[i])):
-                    error += self.network[i][j].calc_error(expectation=numbers[j])
-                self.outputError.append(error)
+                    self.network[i][j].calc_error(expectation=numbers[j])
             else:
-                if i + 1 == len(self.network):
-                    for entry in self.network[i - 1]:
-                        entry.calc_nested_error(self.outputError[i - 1])
-                else:
-                    error = 0
-                    for entry in self.network[i - 1]:
-                        entry.calc_nested_error(self.outputError[i - 1])
-                    for entry in self.network[i]:
-                        error += entry.get_error()
-                    self.outputError.append(error)
+                error = []
+                for entry in self.network[i - 1]:
+                    if error == []:
+                        error = entry.get_error_per_layer()
+                    else:
+                        tmp = error
+                        error = [x + y for x, y in zip(tmp, entry.get_error_per_layer())]
+                for entry in self.network[i - 1]:
+                    entry.calc_nested_error(error)
 
     def get_output(self):
         """
@@ -248,13 +253,13 @@ outputlayer = [output_1, output_2, output_3]
 
 network = Network([layer1, layer2, outputlayer])
 
-trainingAmount = 500
+trainingAmount = 100
 for j in range(trainingAmount):
     for i in range(len(data)):
         for perceptron in layer1:
             perceptron.set_input(data[i])
         network.update(types[i])
-    print("{}%".format(round((j/trainingAmount)*100, 2)))
+    print("Progress: {:5}%".format(round((j/trainingAmount)*100, 2)))
 
 for i in range(len(testData)):
     for perceptron in layer1:
@@ -266,52 +271,3 @@ for i in range(len(testData)):
         print(testTypes[i][result], tmp[result])
     print()
 print(network)
-
-"""
-Using 2 layers, 4 perceptrons in first layer and 3 perceptrons in second layer
-After 20000 training cycles this is the result: very good in recognizing 2 flowers, sucks at the other.
-    [4.6, 3.2, 1.4, 0.2]
-    1 0.9999474017349969
-    0 0.00463060774660794
-    0 6.097374143674061e-20
-
-    [5.3, 3.7, 1.5, 0.2]
-    1 0.9999477048870187
-    0 0.00461342180909956
-    0 6.077745206280764e-20
-
-    [5.0, 3.3, 1.4, 0.2]
-    1 0.9999475868371107
-    0 0.004620111245462931
-    0 6.085370490957907e-20
-
-    [6.2, 2.9, 4.3, 1.3]
-    0 3.828661916927722e-12
-    1 0.9999999257324264
-    0 2.0033850582385063e-10
-
-    [5.1, 2.5, 3.0, 1.1]
-    0 2.348258758220833e-13
-    1 0.9999999970975888
-    0 1.4197243846800672e-10
-
-    [5.7, 2.8, 4.1, 1.3]
-    0 1.467980066472219e-11
-    1 0.9999996940698438
-    0 1.9559945326926964e-10
-
-    [6.5, 3.0, 5.2, 2.0]
-    0 0.0007414501161123253
-    0 0.024304156496187057
-    1 1.4398280496890573e-10
-
-    [6.2, 3.4, 5.4, 2.3]
-    0 0.0012325815945438338
-    0 0.014363712983638338
-    1 1.4271698168523395e-10
-
-    [5.9, 3.0, 5.1, 1.8]
-    0 0.0007329576779295607
-    0 0.024593908088825472
-    1 1.440114885666432e-10
-"""
