@@ -81,14 +81,11 @@ output = [np.array([1]),
           np.array([0]),
           np.array([0])]
 
-w = [np.array([[np.random.rand(), np.random.rand(), np.random.rand()],
-               [np.random.rand(), np.random.rand(), np.random.rand()]]),
-        np.array([[np.random.rand(), np.random.rand(), np.random.rand()]])]
+w = [np.random.rand(2, 3), np.random.rand(1, 3)]
 
 # Does not work flawless, but this is because of the way backprop works (or better said not perfectly works)
-
 for i in range(1000):
     for j in range(len(inputs)):
         deltas = backprop(inputs[j], output[j], w)
         for index in range(len(w)):
-             w[index] = w[index] + deltas[index]
+            w[index] = w[index] + deltas[index]
