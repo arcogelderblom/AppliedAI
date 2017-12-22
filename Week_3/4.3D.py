@@ -261,13 +261,12 @@ for j in range(trainingAmount):
         network.update(types[i])
     print("Progress: {:5}%".format(round((j/trainingAmount)*100, 2)))
 
+hits = 0
 for i in range(len(testData)):
     for perceptron in layer1:
         perceptron.set_input(testData[i])
     tmp = network.get_output()
-
-    print(testData[i])
-    for result in range(len(tmp)):
-        print(testTypes[i][result], tmp[result])
-    print()
-print(network)
+    if testTypes[i].index(1) == tmp.index(sorted(tmp, reverse=True)[0]):
+        hits += 1
+print('\n' + str(network))
+print("\nThe network had {}% of the test data right".format(hits/len(testData)*100))
