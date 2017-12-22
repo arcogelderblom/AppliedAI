@@ -56,10 +56,10 @@ def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_s
     for i in range(0, layers):
         a_prev = forward(inputs, weights, function, layers-i-1) # calculate activation of previous layer
         if i == 0:
-            error = np.array(derivative(a_now) * (outputs - a_now)).T  # calculate error on output
+            error = np.array(derivative(a_now) * (outputs - a_now))  # calculate error on output
         else:
-            error = np.expand_dims(derivative(a_now), axis=1) * weights[-i].T.dot(error)[1:] # calculate error on current layer
-        delta = eta * np.expand_dims(np.append(1, a_prev), axis=1) * error.T # calculate adjustments to weights
+            error = derivative(a_now) * (weights[-i].T).dot(error)[1:] # calculate error on current layer
+        delta = eta * np.expand_dims(np.append(1, a_prev), axis=1) * error # calculate adjustments to weights
         deltas.insert(0, delta.T) # store adjustments
         a_now = a_prev # move one layer backwards
 
