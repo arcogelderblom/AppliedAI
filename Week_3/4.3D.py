@@ -268,5 +268,10 @@ for i in range(len(testData)):
     tmp = network.get_output()
     if testTypes[i].index(1) == tmp.index(sorted(tmp, reverse=True)[0]):
         hits += 1
+    else:
+        print("This one was WRONG! {}".format(testData[i]))
+        for result in range(len(tmp)):
+            print(testTypes[i][result], tmp[result])
+        print()
 print('\n' + str(network))
 print("\nThe network had {}% of the test data right".format(hits/len(testData)*100))
