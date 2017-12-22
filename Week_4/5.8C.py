@@ -24,15 +24,15 @@ def forward(inputs,weights,function=sigmoid,step=-1):
     step=0 returns the inputs
     any step in between, returns the output vector of that particular (hidden) layer"""
     if step == 0:
-        return np.append(1, inputs)
+        return inputs
     elif step == -1:
         step = len(weights)
-        return sigmoid(np.dot(weights[step-1], forward(inputs, weights, sigmoid, step-1)))
+        return function(np.dot(weights[step-1], np.append(1, forward(inputs, weights, function, step-1))))
     else:
         if step == len(weights):
-            return sigmoid(np.dot(weights[step-1], forward(inputs, weights, sigmoid, step-1)))
+            return function(np.dot(weights[step-1], np.append(1, forward(inputs, weights, function, step-1))))
         else:
-            return np.append(1, sigmoid(np.dot(weights[step-1], forward(inputs, weights, sigmoid, step-1))))
+            return function(np.dot(weights[step-1], np.append(1, forward(inputs, weights, function, step-1))))
 
 
 def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_sigmoid, eta=0.01):
@@ -70,6 +70,7 @@ def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_s
 # for index in range(len(w)):
 #     w[index] = w[index] + deltas[index]
 
+# Bias gets added dynamically, but pay attention to the bias in the weights array.
 inputs = [np.array([0, 0]),
         np.array([0, 1]),
         np.array([1, 0]),
@@ -80,9 +81,7 @@ output = [np.array([1]),
           np.array([0]),
           np.array([0])]
 
-w = [np.array([[1, 0.5, 0.5], [1, 0.5, 0.5]]), np.array([1, 0.5, 0.5])]
-#print(w)
-#print(inputs[0])
-#print(output[0])
+w = [np.array([[1, 0.5, 0.5], [1, 0.5, 0.5]]), np.array([[1, 0.5, 0.5]])]
+
 print(backprop(inputs[0], output[0], w))
-print(forward(inputs[0], w, step=0))
+print(forward(inputs[0], w, step=1))
