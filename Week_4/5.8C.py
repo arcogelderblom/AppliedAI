@@ -3,7 +3,7 @@ from math import e
 
 def sigmoid(x):
     """Standard sigmoid; since it relies on ** to do computation, it broadcasts on vectors and matrices"""
-    return 1 / (1 - (e**(-x)))
+    return 1 / (1 - (np.power(e, -x)))
 
 def derivative_sigmoid(x):
     """Expects input x to be already sigmoid-ed"""
@@ -84,8 +84,15 @@ output = [np.array([1]),
 w = [np.random.rand(2, 3), np.random.rand(1, 3)]
 
 # Does not work flawless, but this is because of the way backprop works (or better said not perfectly works)
-for i in range(1000):
+
+for entry in range(len(inputs)):
+    print("Expected: {}, Got: {}".format(output[entry], forward(inputs[entry], w)))
+
+for i in range(5000):
     for j in range(len(inputs)):
         deltas = backprop(inputs[j], output[j], w)
         for index in range(len(w)):
             w[index] = w[index] + deltas[index]
+
+for entry in range(len(inputs)):
+    print("Expected: {}, Got: {}".format(output[entry], forward(inputs[entry], w)))
