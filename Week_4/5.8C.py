@@ -72,27 +72,28 @@ def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_s
 
 # Bias gets added dynamically, but pay attention to the bias in the weights array.
 inputs = [np.array([0, 0]),
-        np.array([0, 1]),
-        np.array([1, 0]),
-        np.array([1, 1])]
+          np.array([0, 1]),
+          np.array([1, 0]),
+          np.array([1, 1])]
 
+# Following a truth table for a NOR port
 output = [np.array([1]),
           np.array([0]),
           np.array([0]),
           np.array([0])]
 
-w = [np.random.rand(2, 3), np.random.rand(1, 3)]
+w = [np.random.rand(1, 3)]
 
 # Does not work flawless, but this is because of the way backprop works (or better said not perfectly works)
 
 for entry in range(len(inputs)):
     print("Expected: {}, Got: {}".format(output[entry], forward(inputs[entry], w)))
 
-for i in range(5000):
+for i in range(100):
     for j in range(len(inputs)):
         deltas = backprop(inputs[j], output[j], w)
         for index in range(len(w)):
             w[index] = w[index] + deltas[index]
-
+print()
 for entry in range(len(inputs)):
-    print("Expected: {}, Got: {}".format(output[entry], forward(inputs[entry], w)))
+    print("Expected: {}, Got: {}".format(output[entry], forward(inputs[entry], w)-1))

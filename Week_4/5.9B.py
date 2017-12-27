@@ -59,7 +59,7 @@ def forward(inputs,weights,function=sigmoid,step=-1):
             return function(np.dot(weights[step-1], np.append(1, forward(inputs, weights, function, step-1))))
 
 
-def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_sigmoid, eta=0.01):
+def backprop(inputs, outputs, weights, function=sigmoid, derivative=derivative_sigmoid, eta=0.1):
     """
     Function to calculate deltas matrix based on gradient descent / backpropagation algorithm.
     Deltas matrix represents the changes that are needed to be performed to the weights (per layer) to
@@ -95,7 +95,10 @@ theta1 = np.random.rand(10, 785)
 w = [theta1]
 tmp = forward(get_image(0)[0], w)
 
-for train in range(1):
+print(forward(get_image(0)[0], w))
+
+for train in range(100):
+    print(train+1)
     for i in range(len(train_set[0])):
         input = get_image(i)[0]
         output = convertTable[get_image(i)[1]]
@@ -103,5 +106,7 @@ for train in range(1):
         for index in range(len(w)):
             w[index] = w[index] + deltas[index]
 
-if tmp.all() == forward(get_image(0)[0], w).all():
-    print("Training did not change anything")
+tmp = forward(get_image(0)[0], w)
+for i in tmp:
+    print(tmp[i])
+
