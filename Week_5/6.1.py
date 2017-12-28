@@ -71,7 +71,7 @@ def sort_generation(population, expectedSum, expectedMultiply):
 def create_new_generation(population, keepBestAmount):
     """
     Create a new generation by inverting one random gene in the genotype
-    :param currentGen: expects an list of the current generation ordered by fitness, the best are first, worst are last
+    :param population: expects an list of the current generation ordered by fitness, the best are first, worst are last
     :param keepBestAmount: amount of 'best' that you want to keep, the rest gets mutated
     :return: returns the new generation
     """
